@@ -106,24 +106,6 @@ const Reports = () => {
     [categoryNameById],
   );
 
-  // const resolveWarehouseName = (product) => {
-  //   if (product?.warehouse && typeof product.warehouse === "object")
-  //     return product.warehouse.name || product.warehouse.code || "Unassigned";
-  //   if (typeof product?.warehouse === "string")
-  //     return warehouseNameById.get(product.warehouse) || "Unassigned";
-  //   return "Unassigned";
-  // };
-
-  // const resolveSupplierName = (product) => {
-  //   if (product?.supplier && typeof product.supplier === "object")
-  //     return product.supplier.name || "N/A";
-  //   if (typeof product?.supplier === "string")
-  //     return (
-  //       supplierNameById.get(product.supplier) || product.supplier || "N/A"
-  //     );
-  //   return "N/A";
-  // };
-
   const filteredProducts = useMemo(() => {
     return (products || []).filter((product) => {
       const prodDate = toDateValue(product?.createdAt);

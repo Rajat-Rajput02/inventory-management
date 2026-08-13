@@ -44,7 +44,6 @@ import { ROUTES } from "../constants/routes";
 
 import CategoryPieChart from "../components/charts/CategoryPieChart";
 import StockBarChart from "../components/charts/StockBarChart";
-
 import { getCategoryData, getStockData } from "../utils/chartData";
 import LowStockWidget from "../components/dashboard/LowStockWidget";
 import InventoryStatistics from "../components/dashboard/InventoryStatistics";

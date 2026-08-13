@@ -11,7 +11,6 @@ import {
 import { useState } from "react";
 
 import { changePassword } from "../../services/userService";
-
 import AppSnackbar from "../common/AppSnackbar";
 
 import useAuth from "../../hooks/useAuth";

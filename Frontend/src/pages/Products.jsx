@@ -13,14 +13,14 @@ import ProductForm from "../components/product/ProductForm";
 import TransactionForm from "../components/transaction/TransactionForm";
 import DeleteDialog from "../components/product/DeleteDialog";
 import EmptyState from "../components/product/EmptyState";
-import AppSnackbar from "../components/common/AppSnackbar";
+
 
 import useProducts from "../hooks/useProducts";
 import useDashboard from "../hooks/useDashboard";
 import useTransactions from "../hooks/useTransaction";
 import useCategories from "../hooks/useCategories";
 import { createTransaction as createTransactionApi } from "../services/transactionService"; // Adjust path to transactionService
-
+import AppSnackbar from "../components/common/AppSnackbar";
 import ProductDetailsDrawer from "../components/product/ProductDetailsDrawer";
 import PageContainer from "../components/layout/PageContainer";
 
@@ -290,15 +290,6 @@ onClose={() => {
         product={selectedProduct}
         type={transactionType}
         onSubmit={handleTransactionSubmit}
-        // onSubmit={async (data) => {
-        //   await createTransaction(data);
-
-        //   setTransactionOpen(false);
-
-        //   await refreshProducts();
-
-        //   await reloadTransactions();
-        // }}
       />
       {/* Product Details Drawer */}
       <ProductDetailsDrawer
