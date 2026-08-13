@@ -16,7 +16,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 import Loader from "../components/common/Loader";
-import AppSnackbar from "../components/common/AppSnackBar";
+import AppSnackbar from "../components/common/AppSnackbar";
 import StatsCard from "../components/common/StatsCard";
 import PageHeader from "../components/layout/PageHeader";
 import WarehouseTable from "../components/warehouse/warehouseTable";

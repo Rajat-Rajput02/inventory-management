@@ -34,7 +34,7 @@ import useWarehouses from "../hooks/useWarehouses";
 import useSuppliers from "../hooks/useSuppliers";
 
 import exportExcel from "../utils/export/exportExcel";
-import exportPDF from "../utils/export/exportPdf";
+import exportPdf from "../utils/export/exportPdf";
 import { formatCurrency } from "../utils/currency";
 import { getCategoryData, getStockData } from "../utils/chartData";
 import PageContainer from "../components/layout/PageContainer";
@@ -226,7 +226,7 @@ const Reports = () => {
   };
 
   const handlePdfExport = () => {
-    exportPDF(filteredProducts, summary);
+    exportPdf(filteredProducts, summary);
     showSnackbar("PDF Report exported successfully!");
   };
 

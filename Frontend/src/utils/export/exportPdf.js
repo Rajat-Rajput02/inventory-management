@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const exportPDF = (products = [], summary = {}, user = { name: "Admin" }) => {
+const exportPdf = (products = [], summary = {}, user = { name: "Admin" }) => {
   const doc = new jsPDF();
   const currentDate = new Date().toLocaleDateString();
   const currentTime = new Date().toLocaleTimeString();
@@ -80,4 +80,4 @@ const exportPDF = (products = [], summary = {}, user = { name: "Admin" }) => {
   doc.save(`Inventory_Report_${new Date().toISOString().slice(0, 10)}.pdf`);
 };
 
-export default exportPDF;
+export default exportPdf;

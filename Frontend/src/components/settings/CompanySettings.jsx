@@ -13,7 +13,7 @@ import useSettings from "../../hooks/useSettings";
 import useWarehouses from "../../hooks/useWarehouses";
 
 import AppSnackbar from "../common/AppSnackbar";
-import { CURRENCIES, TIMEZONES } from "../../constants/statuses";
+import { CURRENCIES, TIMEZONES } from "../../constants/Statuses";
 
 const CompanySettings = () => {
   const { settings, loading, saveSettings } = useSettings();

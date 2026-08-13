@@ -10,7 +10,7 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import exportExcel from "../../utils/export/exportExcel";
-import exportPDF from "../../utils/export/exportPDF";
+import exportPdf from "../../utils/export/exportPdf";
 import printInventory from "../../utils/export/printInventory";
 
 
@@ -54,7 +54,7 @@ const QuickActions = ({ onAdd, products }) => {
         color="error"
           variant="outlined"
           startIcon={<PictureAsPdf />}
-          onClick={() => exportPDF(products)}
+          onClick={() => exportPdf(products)}
         >
           Export PDF
         </Button>
