@@ -37,7 +37,6 @@ import exportExcel from "../utils/export/exportExcel";
 import exportPDF from "../utils/export/exportPDF";
 import { formatCurrency } from "../utils/currency";
 import { getCategoryData, getStockData } from "../utils/chartData";
-import { formatDate } from "../utils/date";
 import PageContainer from "../components/layout/PageContainer";
 
 const noop = () => {};
