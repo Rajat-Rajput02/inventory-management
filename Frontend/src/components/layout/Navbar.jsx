@@ -36,13 +36,18 @@ const Navbar = ({
   const handleOpen = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const initials = user?.name
     ?.split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase();
+
+  const handleLogout = () => {
+    handleClose();
+    logout();
+  };
 
   return (
     <AppBar
@@ -129,14 +134,18 @@ const Navbar = ({
             Profile
           </MenuItem>
 
-          <MenuItem onClick={handleClose}>
+          <MenuItem
+            component={RouterLink}
+            to={ROUTES.SETTINGS}
+            onClick={handleClose}
+          >
             <SettingsIcon sx={{ mr: 1 }} />
             Settings
           </MenuItem>
 
           <Divider />
 
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={handleLogout}>
             <LogoutIcon sx={{ mr: 1 }} />
             Logout
           </MenuItem>

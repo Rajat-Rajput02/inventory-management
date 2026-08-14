@@ -64,7 +64,6 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
-  const [analytics, setAnalytics] = useState(null);
   const [activities, setActivities] = useState([]);
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -87,16 +86,15 @@ const Dashboard = () => {
     try {
       setLoading(true);
 
-      const [statsRes, chartsRes, analyticsRes, activityData] =
-        await Promise.all([
-          getDashboardStats(),
-          getChartData(),
-          getActivities(),
-        ]);
+      const [statsRes, chartsRes, activityData] = await Promise.all([
+        getDashboardStats(),
+        getChartData(),
+        getActivities(),
+      ]);
 
       setStats(statsRes?.data || statsRes);
       setChartData(chartsRes?.data || chartsRes);
-      setAnalytics(analyticsRes?.data || analyticsRes);
+
       setActivities(
         Array.isArray(activityData) ? activityData : activityData?.data || [],
       );

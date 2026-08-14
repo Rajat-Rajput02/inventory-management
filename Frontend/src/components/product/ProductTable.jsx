@@ -268,12 +268,33 @@ const ProductTable = ({
           sx={{
             border: 0,
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: (theme) => theme.palette.primary.main,
+              backgroundColor: (theme) =>
+                theme.palette.mode === "dark"
+                  ? theme.palette.primary.dark
+                  : theme.palette.primary.main,
               color: "#fff",
               fontWeight: 700,
             },
+
             "& .MuiDataGrid-columnHeaderTitle": {
-              fontWeight: "bold",
+              color: "#fff",
+              fontWeight: 700,
+            },
+
+            "& .MuiDataGrid-columnHeader": {
+              backgroundColor: (theme) =>
+                theme.palette.mode === "dark"
+                  ? theme.palette.primary.dark
+                  : theme.palette.primary.main,
+              color: "#fff",
+            },
+
+            "& .MuiDataGrid-columnHeader .MuiDataGrid-sortIcon": {
+              color: (theme) => theme.palette.text.secondary,
+            },
+
+            "& .MuiDataGrid-menuIconButton": {
+              color: (theme) => theme.palette.text.secondary,
             },
             "& .MuiDataGrid-row": {
               transition: "0.2s",
