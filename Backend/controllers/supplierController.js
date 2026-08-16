@@ -1,20 +1,65 @@
 const Supplier = require("../models/Supplier");
 const Product = require("../models/Product");
 
+const normalizeSupplierData = (body) => ({
+  name: body.name?.trim() || "",
+  email: body.email?.trim().toLowerCase() || "",
+  phone: body.phone?.trim() || "",
+  company: body.company?.trim() || "",
+  address: body.address?.trim() || "",
+  gstNumber: body.gstNumber?.trim() || "",
+  notes: body.notes?.trim() || "",
+  status: body.status || "Active",
+});
+
+const findDuplicateSupplier = async ({ owner, data, excludeId = null }) => {
+  const query = {
+    owner,
+    ...data,
+  };
+
+  if (excludeId) {
+    query._id = { $ne: excludeId };
+  }
+
+  return Supplier.findOne(query);
+};
+
 exports.addSupplier = async (req, res) => {
   try {
+    const supplierData = normalizeSupplierData(req.body);
+
+    if (!supplierData.name) {
+      return res.status(400).json({
+        message: "Supplier name is required.",
+      });
+    }
+
+    const duplicate = await findDuplicateSupplier({
+      owner: req.user._id,
+      data: supplierData,
+    });
+
+    if (duplicate) {
+      return res.status(409).json({
+        message: "A supplier with the same details already exists.",
+      });
+    }
+
     const supplier = await Supplier.create({
-      ...req.body,
+      ...supplierData,
       owner: req.user._id,
     });
 
     res.status(201).json(supplier);
   } catch (error) {
+    console.error("Add Supplier Error:", error);
     res.status(500).json({
       message: error.message,
     });
   }
 };
+
 exports.getSuppliers = async (req, res) => {
   try {
     const suppliers = await Supplier.find({
@@ -30,32 +75,52 @@ exports.getSuppliers = async (req, res) => {
     });
   }
 };
+
 exports.updateSupplier = async (req, res) => {
   try {
-    const supplier = await Supplier.findOneAndUpdate(
-      {
-        _id: req.params.id,
-        owner: req.user._id,
-      },
-      req.body,
-      {
-        returnDocument: 'after',
-      }
-    );
+    const supplierData = normalizeSupplierData(req.body);
 
-    if (!supplier) {
+    if (!supplierData.name) {
+      return res.status(400).json({
+        message: "Supplier name is required.",
+      });
+    }
+
+    const existing = await Supplier.findOne({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
+
+    if (!existing) {
       return res.status(404).json({
         message: "Supplier not found",
       });
     }
 
-    res.json(supplier);
+    const duplicate = await findDuplicateSupplier({
+      owner: req.user._id,
+      data: supplierData,
+      excludeId: req.params.id,
+    });
+
+    if (duplicate) {
+      return res.status(409).json({
+        message: "Another supplier with the same details already exists.",
+      });
+    }
+
+    Object.assign(existing, supplierData);
+    await existing.save();
+
+    res.json(existing);
   } catch (error) {
+    console.error("Update Supplier Error:", error);
     res.status(500).json({
       message: error.message,
     });
   }
 };
+
 exports.deleteSupplier = async (req, res) => {
   try {
     const supplier = await Supplier.findOne({
@@ -91,6 +156,7 @@ exports.deleteSupplier = async (req, res) => {
     });
   }
 };
+
 exports.getSupplierStats = async (req, res) => {
   try {
     const total = await Supplier.countDocuments({

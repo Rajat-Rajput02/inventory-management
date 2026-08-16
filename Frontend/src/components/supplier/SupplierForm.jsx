@@ -28,12 +28,28 @@ const SupplierForm = ({
   const [form, setForm] = useState(initial);
 
   const settingSupplier = useCallback(() => {
-    setForm(supplier || initial);
+    if (supplier) {
+      setForm({
+        name: supplier.name || "",
+        email: supplier.email || "",
+        phone: supplier.phone || "",
+        company: supplier.company || "",
+        address: supplier.address || "",
+        gstNumber: supplier.gstNumber || "",
+        notes: supplier.notes || "",
+        status: supplier.status || "Active",
+      });
+    } else {
+      // Always start a new supplier with a fresh empty object.
+      setForm({ ...initial });
+    }
   }, [supplier]);
 
   useEffect(() => {
-    settingSupplier();
-  }, [settingSupplier]);
+    if (open) {
+      settingSupplier();
+    }
+  }, [open, settingSupplier]);
 
   const handleChange = (e) => {
     setForm({

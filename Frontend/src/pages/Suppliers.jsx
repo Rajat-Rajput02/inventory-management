@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Paper, Typography } from "@mui/material";
 import { useState } from "react";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -11,6 +11,7 @@ import useSuppliers from "../hooks/useSuppliers";
 import EmptyState from "../components/product/EmptyState";
 import PageContainer from "../components/layout/PageContainer";
 import AppSnackbar from "../components/common/AppSnackbar";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const StatCard = ({ title, value }) => (
   <Paper sx={{ p: 3, borderRadius: 3 }}>
@@ -28,6 +29,8 @@ const Suppliers = () => {
 
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -47,12 +50,19 @@ const Suppliers = () => {
     setOpen(true);
   };
 
-  const handleDelete = async (supplier) => {
-    if (!window.confirm(`Delete ${supplier.name}?`)) return;
+  const handleDelete = (supplier) => {
+    setDeleteTarget(supplier);
+    setDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget?._id) return;
 
     try {
-      await deleteSupplier(supplier._id);
+      await deleteSupplier(deleteTarget._id);
       await reload();
+      setDeleteDialog(false);
+      setDeleteTarget(null);
       showSnackbar("Supplier deleted successfully");
     } catch (error) {
       showSnackbar(
@@ -137,10 +147,41 @@ const Suppliers = () => {
 
       <SupplierForm
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false);
+          setSelected(null);
+        }}
         onSubmit={handleSubmit}
         supplier={selected}
       />
+
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <WarningAmberIcon color="warning" />
+          Delete Supplier
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            You are about to permanently delete
+            <strong> {deleteTarget?.name}</strong>. This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { setDeleteDialog(false); setDeleteTarget(null); }}>
+            Cancel
+          </Button>
+          <Button color="error" variant="contained" onClick={handleConfirmDelete}>
+            Delete Supplier
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <AppSnackbar
         open={snackbar.open}
