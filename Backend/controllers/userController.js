@@ -55,17 +55,19 @@ exports.updateProfile = async (req, res) => {
 
     await user.save();
 
-    await logActivity(
-      user._id,
-      null,
-      "Profile Updated",
-      "Profile information updated"
-    );
+    await logActivity({
+      user: user._id,
+      action: "Profile Updated",
+      module: "User",
+      description: "Profile information updated",
+    });
     res.status(200).json({
       message: "Profile updated successfully",
       user,
     });
   } catch (error) {
+    console.error("Update Profile Error:", error);
+
     res.status(500).json({
       message: error.message,
     });
