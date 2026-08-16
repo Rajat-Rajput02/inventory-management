@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button, Grid } from "@mui/material";
 import PageHeader from "../components/layout/PageHeader";
@@ -5,9 +6,12 @@ import useTransactions from "../hooks/useTransaction";
 import { formatNumber } from "../utils/number";
 import EmptyState from "../components/product/EmptyState";
 import PageContainer from "../components/layout/PageContainer";
+import TransactionForm from "../components/transaction/TransactionForm"; 
 
 const Transactions = () => {
   const { transactions, loading } = useTransactions();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const columns = [
     {
@@ -33,12 +37,36 @@ const Transactions = () => {
     { field: "reason", headerName: "Reason", width: 300 },
     { field: "notes", headerName: "Notes", width: 300 },
   ];
+const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleFormSubmit = async (formData) => {
+    setSubmitting(true);
+    try {
+      if (createTransaction) {
+        await createTransaction(formData);
+      }
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error adding transaction:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   {
-    if (transactions.length === 0) {
+    if (!loading && Array.isArray(transactions) && transactions.length === 0) {
       return (
         <EmptyState
           title="No Transaction"
           subtitle="Start by adding your first Transaction."
+          onAdd={handleOpenModal}
+
         />
       );
     }
@@ -58,11 +86,17 @@ const Transactions = () => {
       />
       <Grid container spacing={2} mt={2}>
         <Grid size="auto">
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={handleOpenModal}>
             + Add Transaction
           </Button>
         </Grid>
       </Grid>
+      <TransactionForm
+        open={modalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleFormSubmit}
+        loading={submitting}
+      />
     </PageContainer>
   );
 };
