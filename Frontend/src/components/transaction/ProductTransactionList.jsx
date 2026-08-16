@@ -22,7 +22,7 @@ const ProductTransactionList = ({ transactions = [] }) => {
         <ListItem key={item._id} divider>
           <ListItemText
             primary={`${item.type} • ${item.quantity}`}
-            secondary={`${item.reason} • ${formatDate(transactions.createdAt)}`}
+            secondary={`${item.reason} • ${formatDate(item.createdAt)}`}
           />
 
           <Chip

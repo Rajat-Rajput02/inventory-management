@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container } from "@mui/material"
+import { Container } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import PageHeader from "../components/layout/PageHeader";
 
@@ -13,7 +13,6 @@ import ProductForm from "../components/product/ProductForm";
 import TransactionForm from "../components/transaction/TransactionForm";
 import DeleteDialog from "../components/product/DeleteDialog";
 import EmptyState from "../components/product/EmptyState";
-
 
 import useProducts from "../hooks/useProducts";
 import useDashboard from "../hooks/useDashboard";
@@ -47,7 +46,7 @@ const Products = () => {
   const [transactionType, setTransactionType] = useState("IN");
 
   const [transactionOpen, setTransactionOpen] = useState(false);
-const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const {
     searchTerm,
@@ -103,7 +102,7 @@ const [drawerOpen, setDrawerOpen] = useState(false);
   const handleSave = async (formData) => {
     try {
       if (selectedProduct?._id || selectedProduct?.id) {
-const id = selectedProduct._id || selectedProduct.id;
+        const id = selectedProduct._id || selectedProduct.id;
         await editProduct(id, formData);
         showSnackbar("Product Updated Successfully");
       } else {
@@ -111,7 +110,7 @@ const id = selectedProduct._id || selectedProduct.id;
 
         showSnackbar("Product Added Successfully");
       }
-await refreshProducts(); // Refresh DataGrid list
+      await refreshProducts(); // Refresh DataGrid list
       closeForm();
     } catch (error) {
       const serverMessage =
@@ -125,7 +124,7 @@ await refreshProducts(); // Refresh DataGrid list
   // ==========================
   // DELETE PRODUCT
   // ==========================
-const handleDelete = async () => {
+  const handleDelete = async () => {
     try {
       await removeProduct(deleteProduct._id || deleteProduct.id);
       showSnackbar("Product Deleted Successfully");
@@ -157,7 +156,7 @@ const handleDelete = async () => {
     setDeleteProduct(product);
     setDeleteDialog(true);
   };
-// ==========================
+  // ==========================
   // TRANSACTION IN / OUT FIX
   // ==========================
   const handleStockIn = (product) => {
@@ -174,27 +173,40 @@ const handleDelete = async () => {
 
   const handleTransactionSubmit = async (data) => {
     try {
-      // Attach target productId explicitly
-const payload = {
-  product: selectedProduct?._id || selectedProduct?.id,   // standard Mongoose ref name
-  productId: selectedProduct?._id || selectedProduct?.id, // fallback field
-  type: transactionType,                                 // "IN" or "OUT"
-  quantity: Number(data.quantity),
-  unitPrice: Number(data.unitPrice || data.price || selectedProduct?.costPrice || 0),
-  notes: data.notes || "",
-};
+      const productId =
+        data.product || selectedProduct?._id || selectedProduct?.id;
+
+      const type = data.type || transactionType;
+
+      const payload = {
+        product: productId,
+        productId: productId,
+        type,
+        quantity: Number(data.quantity),
+        unitPrice: Number(
+          data.unitPrice || data.price || selectedProduct?.costPrice || 0,
+        ),
+        reason: data.reason,
+        notes: data.notes || "",
+      };
 
       await createTransaction(payload);
-      showSnackbar(`Stock ${transactionType === "IN" ? "Added" : "Removed"} Successfully`);
-      
+
+      showSnackbar(`Stock ${type === "IN" ? "Added" : "Removed"} Successfully`);
+
       setTransactionOpen(false);
       setSelectedProduct(null);
 
-      // Force UI updates
-      if (refreshProducts) await refreshProducts();
-      if (reloadTransactions) await reloadTransactions();
+      if (refreshProducts) {
+        await refreshProducts();
+      }
+
+      if (reloadTransactions) {
+        await reloadTransactions();
+      }
     } catch (err) {
       const msg = err?.response?.data?.message || "Transaction failed";
+
       showSnackbar(msg, "error");
     }
   };
@@ -230,15 +242,16 @@ const payload = {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         categories={categories}
-onAddProduct={openAddDialog}      />
+        onAddProduct={openAddDialog}
+      />
       {/* Table / Empty State */}
       {filteredProducts.length === 0 ? (
-        <EmptyState 
-        title="No Products"
-    subtitle="Start by adding your first product."
-    buttonText="Add Product"
-    onClick={openAddDialog}
-  /> 
+        <EmptyState
+          title="No Products"
+          subtitle="Start by adding your first product."
+          buttonText="Add Product"
+          onClick={openAddDialog}
+        />
       ) : (
         <ProductTable
           products={filteredProducts}
@@ -283,7 +296,7 @@ onAddProduct={openAddDialog}      />
       {/* <TransactionForm /> */}
       <TransactionForm
         open={transactionOpen}
-onClose={() => {
+        onClose={() => {
           setTransactionOpen(false);
           setSelectedProduct(null);
         }}
