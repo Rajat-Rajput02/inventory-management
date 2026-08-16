@@ -8,6 +8,7 @@ import EmptyState from "../components/product/EmptyState";
 import PageContainer from "../components/layout/PageContainer";
 import TransactionForm from "../components/transaction/TransactionForm";
 import useProducts from "../hooks/useProducts";
+import AppSnackbar from "../components/common/AppSnackbar";
 
 const Transactions = () => {
   const {
