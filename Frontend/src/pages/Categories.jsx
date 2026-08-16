@@ -16,7 +16,8 @@ import {
   deleteCategory,
 } from "../services/categoryService";
 
-import { Container, Button, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
+import AppSnackbar from "../components/common/AppSnackbar";
 import PageContainer from "../components/layout/PageContainer";
 
 const Categories = () => {
@@ -31,6 +32,14 @@ const Categories = () => {
   const [selected, setSelected] = useState(null);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const showSnackbar = (message, severity = "success") =>
+    setSnackbar({ open: true, message, severity });
 
   const openAdd = () => {
     setSelected(null);
@@ -51,23 +60,38 @@ const Categories = () => {
   };
 
   const handleSave = async (form) => {
-    if (selected) {
-      await updateCategory(selected._id, form);
-    } else {
-      await createCategory(form);
+    try {
+      if (selected) {
+        await updateCategory(selected._id, form);
+        showSnackbar("Category updated successfully");
+      } else {
+        await createCategory(form);
+        showSnackbar("Category added successfully");
+      }
+
+      await loadCategories();
+      setOpen(false);
+    } catch (error) {
+      showSnackbar(
+        error?.response?.data?.message || "Unable to save category",
+        "error"
+      );
+      throw error;
     }
-
-    await loadCategories();
-
-    setOpen(false);
   };
 
   const handleDelete = async () => {
-    await deleteCategory(selected._id);
-
-    await loadCategories();
-
-    setDeleteOpen(false);
+    try {
+      await deleteCategory(selected._id);
+      await loadCategories();
+      setDeleteOpen(false);
+      showSnackbar("Category deleted successfully");
+    } catch (error) {
+      showSnackbar(
+        error?.response?.data?.message || "Unable to delete category",
+        "error"
+      );
+    }
   };
 
   return (
@@ -99,6 +123,13 @@ const Categories = () => {
         message="Delete this category?"
         onConfirm={handleDelete}
         onClose={() => setDeleteOpen(false)}
+      />
+
+      <AppSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
       />
     </PageContainer>
   );

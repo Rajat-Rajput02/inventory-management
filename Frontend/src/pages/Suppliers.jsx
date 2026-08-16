@@ -10,6 +10,7 @@ import useSuppliers from "../hooks/useSuppliers";
 
 import EmptyState from "../components/product/EmptyState";
 import PageContainer from "../components/layout/PageContainer";
+import AppSnackbar from "../components/common/AppSnackbar";
 
 const StatCard = ({ title, value }) => (
   <Paper sx={{ p: 3, borderRadius: 3 }}>
@@ -27,6 +28,14 @@ const Suppliers = () => {
 
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const showSnackbar = (message, severity = "success") =>
+    setSnackbar({ open: true, message, severity });
 
   const handleAdd = () => {
     setSelected(null);
@@ -39,21 +48,38 @@ const Suppliers = () => {
   };
 
   const handleDelete = async (supplier) => {
-    if (window.confirm(`Delete ${supplier.name}?`)) {
+    if (!window.confirm(`Delete ${supplier.name}?`)) return;
+
+    try {
       await deleteSupplier(supplier._id);
-      reload();
+      await reload();
+      showSnackbar("Supplier deleted successfully");
+    } catch (error) {
+      showSnackbar(
+        error?.response?.data?.message || "Unable to delete supplier",
+        "error"
+      );
     }
   };
 
   const handleSubmit = async (data) => {
-    if (selected) {
-      await updateSupplier(selected._id, data);
-    } else {
-      await addSupplier(data);
-    }
+    try {
+      if (selected) {
+        await updateSupplier(selected._id, data);
+        showSnackbar("Supplier updated successfully");
+      } else {
+        await addSupplier(data);
+        showSnackbar("Supplier added successfully");
+      }
 
-    setOpen(false);
-    reload();
+      setOpen(false);
+      await reload();
+    } catch (error) {
+      showSnackbar(
+        error?.response?.data?.message || "Unable to save supplier",
+        "error"
+      );
+    }
   };
 
   const active = suppliers.filter((s) => s.status === "Active").length;
@@ -114,6 +140,13 @@ const Suppliers = () => {
         onClose={() => setOpen(false)}
         onSubmit={handleSubmit}
         supplier={selected}
+      />
+
+      <AppSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
       />
     </PageContainer>
   );

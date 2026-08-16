@@ -32,6 +32,7 @@ const TransactionForm = ({
     reason: "",
     notes: "",
   });
+  const [errors, setErrors] = useState({});
 
   const setTransactionForm = useCallback(() => {
     if (open) {
@@ -40,6 +41,7 @@ const TransactionForm = ({
         reason: "",
         notes: "",
       });
+      setErrors({});
     }
   }, [open]);
 
@@ -48,12 +50,28 @@ const TransactionForm = ({
   }, [setTransactionForm]);
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // 
-onSubmit({
+    e.preventDefault();
+
+    const quantity = Number(form.quantity);
+    const nextErrors = {};
+
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      nextErrors.quantity = "Quantity must be greater than 0";
+    }
+
+    if (!form.reason) {
+      nextErrors.reason = "Reason is required";
+    }
+
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) return;
+
+    onSubmit({
       product: product?._id || product?.id,
       productId: product?._id || product?.id,
       type,
-      quantity: Number(form.quantity),
+      quantity,
       reason: form.reason,
       notes: form.notes,
     });
@@ -83,24 +101,25 @@ onSubmit({
             label="Quantity"
             type="number"
             value={form.quantity}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                quantity: e.target.value,
-              })
-            }
+            error={Boolean(errors.quantity)}
+            helperText={errors.quantity}
+            inputProps={{ min: 1, step: 1 }}
+            onChange={(e) => {
+              setForm({ ...form, quantity: e.target.value });
+              setErrors((prev) => ({ ...prev, quantity: "" }));
+            }}
           />
 
           <TextField
             select
             label="Reason"
             value={form.reason}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                reason: e.target.value,
-              })
-            }
+            error={Boolean(errors.reason)}
+            helperText={errors.reason}
+            onChange={(e) => {
+              setForm({ ...form, reason: e.target.value });
+              setErrors((prev) => ({ ...prev, reason: "" }));
+            }}
           >
             {reasons.map((r) => (
               <MenuItem key={r} value={r}>

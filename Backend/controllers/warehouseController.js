@@ -1,4 +1,5 @@
 const Warehouse = require("../models/Warehouse");
+const Product = require("../models/Product");
 
 // Create
 exports.addWarehouse = async (req, res) => {
@@ -64,7 +65,7 @@ exports.updateWarehouse = async (req, res) => {
 // Delete
 exports.deleteWarehouse = async (req, res) => {
   try {
-    const warehouse = await Warehouse.findOneAndDelete({
+    const warehouse = await Warehouse.findOne({
       _id: req.params.id,
       owner: req.user._id,
     });
@@ -74,6 +75,19 @@ exports.deleteWarehouse = async (req, res) => {
         message: "Warehouse not found",
       });
     }
+
+    const inUse = await Product.exists({
+      warehouse: warehouse._id,
+      owner: req.user._id,
+    });
+
+    if (inUse) {
+      return res.status(409).json({
+        message: `Cannot delete warehouse "${warehouse.name}" because it is used by one or more products.`,
+      });
+    }
+
+    await warehouse.deleteOne();
 
     res.json({
       message: "Warehouse deleted successfully",

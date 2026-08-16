@@ -100,27 +100,39 @@ const Profile = () => {
   //========================
   //  Avatar Uploader
   //========================
-  const handleAvatarUpload = async (e) => {
-    const file = e.target.files[0];
+const handleAvatarUpload = async (e) => {
+  const file = e.target.files?.[0];
 
-    if (!file) return;
+  if (!file) return;
 
-    const formData = new FormData();
+  const formData = new FormData();
+  formData.append("avatar", file);
 
-    formData.append("avatar", file);
+  try {
+    const upload = await uploadAvatar(formData);
 
-    try {
-      const upload = await uploadAvatar(formData);
+    updateUser({
+      ...user,
+      avatar: upload.avatar,
+    });
 
-      const updated = await updateProfile({
-        avatar: upload.avatar,
-      });
+    setProfile((prev) => ({
+      ...prev,
+      avatar: upload.avatar,
+    }));
 
-      updateUser(updated.user);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    showSnackbar("Avatar updated successfully");
+  } catch (err) {
+    console.error("Avatar upload failed:", err);
+
+    showSnackbar(
+      err.response?.data?.message || "Failed to upload avatar",
+      "error",
+    );
+  }
+ // Allows selecting the same file again
+  e.target.value = "";
+};
   //====  Handle Profile Update  ==================
   const handleProfileUpdate = async () => {
     try {

@@ -112,6 +112,14 @@ exports.addProduct = async (req, res) => {
     res.status(201).json(product);
   } catch (error) {
     console.error("ADD PRODUCT ERROR STACK:", error);
+
+    if (error?.code === 11000 && error?.keyPattern?.sku) {
+      return res.status(409).json({
+        message: `SKU "${error?.keyValue?.sku || req.body?.sku || "provided SKU"}" already exists. Please use a unique SKU.`,
+        field: "sku",
+      });
+    }
+
     res.status(500).json({
       message: error.message,
     });
@@ -204,6 +212,13 @@ exports.updateProduct = async (req, res) => {
     // Now returns fully populated object containing supplier object
     res.status(200).json(product);
   } catch (error) {
+    if (error?.code === 11000 && error?.keyPattern?.sku) {
+      return res.status(409).json({
+        message: `SKU "${error?.keyValue?.sku || req.body?.sku || "provided SKU"}" already exists. Please use a unique SKU.`,
+        field: "sku",
+      });
+    }
+
     res.status(500).json({
       message: error.message,
     });

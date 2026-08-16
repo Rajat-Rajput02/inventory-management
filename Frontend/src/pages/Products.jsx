@@ -179,7 +179,7 @@ const payload = {
   product: selectedProduct?._id || selectedProduct?.id,   // standard Mongoose ref name
   productId: selectedProduct?._id || selectedProduct?.id, // fallback field
   type: transactionType,                                 // "IN" or "OUT"
-  quantity: Number(data.quantity || 1),
+  quantity: Number(data.quantity),
   unitPrice: Number(data.unitPrice || data.price || selectedProduct?.costPrice || 0),
   notes: data.notes || "",
 };

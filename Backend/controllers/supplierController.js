@@ -1,4 +1,5 @@
 const Supplier = require("../models/Supplier");
+const Product = require("../models/Product");
 
 exports.addSupplier = async (req, res) => {
   try {
@@ -57,7 +58,7 @@ exports.updateSupplier = async (req, res) => {
 };
 exports.deleteSupplier = async (req, res) => {
   try {
-    const supplier = await Supplier.findOneAndDelete({
+    const supplier = await Supplier.findOne({
       _id: req.params.id,
       owner: req.user._id,
     });
@@ -67,6 +68,19 @@ exports.deleteSupplier = async (req, res) => {
         message: "Supplier not found",
       });
     }
+
+    const inUse = await Product.exists({
+      supplier: supplier._id,
+      owner: req.user._id,
+    });
+
+    if (inUse) {
+      return res.status(409).json({
+        message: `Cannot delete supplier "${supplier.name}" because it is used by one or more products.`,
+      });
+    }
+
+    await supplier.deleteOne();
 
     res.json({
       message: "Supplier deleted",

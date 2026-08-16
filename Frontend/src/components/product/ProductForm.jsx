@@ -350,6 +350,7 @@ const ProductForm = ({
             onChange={handleChange}
             error={Boolean(errors.quantity)}
             helperText={errors.quantity}
+            inputProps={{ min: 0, step: 1 }}
           />
         </Grid>
 

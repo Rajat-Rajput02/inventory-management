@@ -25,10 +25,22 @@ exports.createTransaction = async (req, res) => {
 
     // Validation: Quantity check
     const numQty = Number(quantity);
-    if (isNaN(numQty) || numQty <= 0) {
+    if (!Number.isFinite(numQty) || numQty <= 0) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(400).json({ message: "Invalid transaction quantity" });
+      return res.status(400).json({
+        message: "Transaction quantity must be greater than 0",
+        field: "quantity",
+      });
+    }
+
+    if (!["IN", "OUT"].includes(type)) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        message: "Transaction type must be IN or OUT",
+        field: "type",
+      });
     }
 
     // 1. Find Product bound to the active session
@@ -48,17 +60,10 @@ exports.createTransaction = async (req, res) => {
       await session.abortTransaction();
       session.endSession();
 
-      await createActivity({
-        user: req.user._id,
-        action: "STOCK_OUT",
-        module: "Transaction",
-        description: `Removed ${numQty} units from ${existingProduct.name}`,
-        metadata: {
-          productId: existingProduct._id,
-          quantity: numQty,
-        },
+      return res.status(400).json({
+        message: `Insufficient stock. Available quantity: ${existingProduct.quantity}.`,
+        field: "quantity",
       });
-      return res.status(400).json({ message: "Insufficient stock" });
     }
 
     // 3. Update quantity & trigger Stock IN / Stock OUT notifications

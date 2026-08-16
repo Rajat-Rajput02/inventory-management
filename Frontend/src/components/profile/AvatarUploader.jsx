@@ -3,7 +3,7 @@ import { Avatar, Badge, IconButton } from "@mui/material";
 
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
-const AvatarUploader = ({ user, onUpload }) => {
+const AvatarUploader = ({ user, onUpload, sx }) => {
   const inputRef = useRef();
 
   const initials = user.name
@@ -47,6 +47,7 @@ const AvatarUploader = ({ user, onUpload }) => {
             width: 120,
             height: 120,
             fontSize: 40,
+            ...sx,
           }}
         >
           {!user?.avatar && initials}
