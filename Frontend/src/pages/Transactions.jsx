@@ -113,17 +113,6 @@ const Transactions = () => {
     }
   };
 
-  {
-    if (transactions.length === 0) {
-      return (
-        <EmptyState
-          title="No Transaction"
-          subtitle="Start by adding your first Transaction."
-        />
-      );
-    }
-  }
-
   return (
     <PageContainer>
       <PageHeader
