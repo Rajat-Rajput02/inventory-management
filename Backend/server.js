@@ -1,4 +1,5 @@
 const path = require("path");
+const errorHandler = require("./middleware/errorMiddleware");
 
 require("dotenv").config({
   path: path.join(__dirname, ".env"),
@@ -64,6 +65,12 @@ app.use("/api/reports", reportRoutes);
 
 app.use("/api/settings", settingsRoutes);
 
+app.use((req, res) => {
+  res.status(404).json({
+    message: "API endpoint not found",
+  });
+});
+app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.send("Inventory API Running");
