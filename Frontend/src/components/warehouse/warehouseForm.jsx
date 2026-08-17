@@ -18,8 +18,13 @@ const WarehouseForm = ({ open, onClose, selectedWarehouse, onSubmit }) => {
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-const showSnackbar = (message, severity = "success") => setSnackbar({ open: true, message, severity });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const showSnackbar = (message, severity = "success") =>
+    setSnackbar({ open: true, message, severity });
 
   const isEdit = Boolean(selectedWarehouse);
 
@@ -77,15 +82,15 @@ const showSnackbar = (message, severity = "success") => setSnackbar({ open: true
       });
       showSnackbar(
         `Warehouse ${isEdit ? "updated" : "added"} successfully!`,
-        "success"
+        "success",
       );
       setFormData(initialForm);
       setErrors({});
       onClose();
     } catch (error) {
-     showSnackbar(
+      showSnackbar(
         error?.response?.data?.message || "Failed to save warehouse",
-        "error"
+        "error",
       );
     } finally {
       setSaving(false);
@@ -93,113 +98,119 @@ const showSnackbar = (message, severity = "success") => setSnackbar({ open: true
   };
 
   return (
-    <AppDialog
-      open={open}
-      onClose={saving ? undefined : onClose}
-      title={
-        <Stack direction={{ md: "row" }} alignItems="center" spacing={1}>
-          {isEdit ? (
-            <EditIcon color="primary" />
-          ) : (
-            <AddBoxIcon color="primary" />
-          )}
-          <span>{isEdit ? "Edit Warehouse" : "Add Warehouse"}</span>
-        </Stack>
-      }
-      actions={
-        <>
-          <Button onClick={onClose} disabled={saving}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleSubmit} disabled={saving}>
-            {saving
-              ? "Saving..."
-              : isEdit
-                ? "Update Warehouse"
-                : "Add Warehouse"}
-          </Button>
-        </>
-      }
-    >
-      <Grid container spacing={2} sx={{ mt: 1 }}>
-        <Grid size={{ xs: 12 }}>
-          <TextField
-            fullWidth
-            autoFocus
-            label="Warehouse Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            error={Boolean(errors.name)}
-            helperText={errors.name}
-          />
-        </Grid>
+    <>
+      <AppDialog
+        open={open}
+        onClose={saving ? undefined : onClose}
+        title={
+          <Stack direction={{ md: "row" }} alignItems="center" spacing={1}>
+            {isEdit ? (
+              <EditIcon color="primary" />
+            ) : (
+              <AddBoxIcon color="primary" />
+            )}
+            <span>{isEdit ? "Edit Warehouse" : "Add Warehouse"}</span>
+          </Stack>
+        }
+        actions={
+          <>
+            <Button onClick={onClose} disabled={saving}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              disabled={saving}
+            >
+              {saving
+                ? "Saving..."
+                : isEdit
+                  ? "Update Warehouse"
+                  : "Add Warehouse"}
+            </Button>
+          </>
+        }
+      >
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          <Grid size={{ xs: 12 }}>
+            <TextField
+              fullWidth
+              autoFocus
+              label="Warehouse Name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              error={Boolean(errors.name)}
+              helperText={errors.name}
+            />
+          </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            fullWidth
-            label="Code"
-            name="code"
-            value={formData.code}
-            onChange={handleChange}
-            error={Boolean(errors.code)}
-            helperText={errors.code}
-          />
-        </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              fullWidth
+              label="Code"
+              name="code"
+              value={formData.code}
+              onChange={handleChange}
+              error={Boolean(errors.code)}
+              helperText={errors.code}
+            />
+          </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            fullWidth
-            label="Manager"
-            name="manager"
-            value={formData.manager}
-            onChange={handleChange}
-          />
-        </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              fullWidth
+              label="Manager"
+              name="manager"
+              value={formData.manager}
+              onChange={handleChange}
+            />
+          </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            fullWidth
-            label="Phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-        </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              fullWidth
+              label="Phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+          </Grid>
 
-        <Grid size={{ xs: 12 }}>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            label="Address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-        </Grid>
+          <Grid size={{ xs: 12 }}>
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              label="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+            />
+          </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            select
-            fullWidth
-            label="Status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-          >
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Inactive">Inactive</MenuItem>
-          </TextField>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              select
+              fullWidth
+              label="Status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+            >
+              <MenuItem value="Active">Active</MenuItem>
+              <MenuItem value="Inactive">Inactive</MenuItem>
+            </TextField>
+          </Grid>
         </Grid>
-      </Grid>
+      </AppDialog>
       <AppSnackbar
-  open={snackbar.open}
-  message={snackbar.message}
-  severity={snackbar.severity}
-  onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-/>
-    </AppDialog>
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+      />
+    </>
   );
 };
 

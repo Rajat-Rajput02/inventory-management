@@ -14,7 +14,7 @@ import exportPdf from "../../utils/export/exportPdf";
 import printInventory from "../../utils/export/printInventory";
 
 
-const QuickActions = ({ onAdd, products }) => {
+const QuickActions = ({ products }) => {
   const navigate = useNavigate();
 
   return (

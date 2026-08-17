@@ -1,5 +1,4 @@
 import apiClient from "../api/apiClient";
-import { getNotifications } from "./notificationService";
 import * as notificationService from "./notificationService"; 
 
 export const createTransaction = async (data) => {
@@ -13,7 +12,6 @@ export const createTransaction = async (data) => {
   } catch (err) {
     console.warn("Notification refresh skipped:", err);
   }
-
   return response.data;
 };
 

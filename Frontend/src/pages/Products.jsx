@@ -18,7 +18,6 @@ import useProducts from "../hooks/useProducts";
 import useDashboard from "../hooks/useDashboard";
 import useTransactions from "../hooks/useTransaction";
 import useCategories from "../hooks/useCategories";
-import { createTransaction as createTransactionApi } from "../services/transactionService"; // Adjust path to transactionService
 import AppSnackbar from "../components/common/AppSnackbar";
 import ProductDetailsDrawer from "../components/product/ProductDetailsDrawer";
 import PageContainer from "../components/layout/PageContainer";
@@ -35,7 +34,6 @@ const Products = () => {
   } = useProducts();
   const location = useLocation();
   const navigate = useNavigate();
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const { createTransaction, reload: reloadTransactions } = useTransactions();
   const { categories } = useCategories();
   const [openDetails, setOpenDetails] = useState(false);
@@ -92,7 +90,6 @@ const Products = () => {
   // ==========================
   useEffect(() => {
     if (location.state?.openAddModal) {
-      setIsFormOpen(true);
       openAddDialog();
       // Clear location state so refreshing doesn't reopen it
       navigate(location.pathname, { replace: true, state: {} });
@@ -130,7 +127,7 @@ const Products = () => {
       showSnackbar("Product Deleted Successfully");
       await refreshProducts();
       closeDeleteDialog();
-    } catch (err) {
+    } catch {
       showSnackbar("Unable to Delete Product", "error");
     }
   };
@@ -272,9 +269,6 @@ const Products = () => {
       <ProductForm
         open={openForm}
         onClose={handleCloseForm}
-        // open={isFormOpen}
-        // onSubmit={addProduct}
-        // onClose={() => setIsFormOpen(false)}
         selectedProduct={selectedProduct}
         categories={categories}
         onSubmit={handleSave}

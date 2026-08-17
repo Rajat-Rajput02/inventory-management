@@ -80,41 +80,44 @@ const Dashboard = () => {
     message: "",
     severity: "success",
   });
-  const showSnackbar = (message, severity = "success") =>
-    setSnackbar({ open: true, message, severity });
+ const showSnackbar = useCallback((message, severity = "success") => {
+  setSnackbar({
+    open: true,
+    message,
+    severity,
+  });
+}, []);
 
   // 2. Fetch categories required by ProductForm
   const { categories } = useCategories();
 
-  // 3. Handlers
-  const handleOpenProductForm = () => setIsProductFormOpen(true);
-  const handleCloseProductForm = () => setIsProductFormOpen(false);
+const loadDashboardData = useCallback(async () => {
+  try {
+    setLoading(true);
 
-  const loadDashboardData = useCallback(async () => {
-    try {
-      setLoading(true);
+    const [statsRes, chartsRes, activityData] = await Promise.all([
+      getDashboardStats(),
+      getChartData(),
+      getActivities(),
+    ]);
 
-      const [statsRes, chartsRes, activityData] = await Promise.all([
-        getDashboardStats(),
-        getChartData(),
-        getActivities(),
-      ]);
+    setStats(statsRes?.data || statsRes);
+    setChartData(chartsRes?.data || chartsRes);
 
-      setStats(statsRes?.data || statsRes);
-      setChartData(chartsRes?.data || chartsRes);
-
-      setActivities(
-        Array.isArray(activityData) ? activityData : activityData?.data || [],
-      );
-    } catch (err) {
-      showSnackbar(
-        error?.response?.data?.message || "Error fetching dashboard data:",
-        "error",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    setActivities(
+      Array.isArray(activityData)
+        ? activityData
+        : activityData?.data || [],
+    );
+  } catch (err) {
+    showSnackbar(
+      err?.response?.data?.message || "Error fetching dashboard data",
+      "error",
+    );
+  } finally {
+    setLoading(false);
+  }
+}, [showSnackbar]);
 
   const handleCreateProduct = async (formData) => {
     try {
@@ -576,6 +579,12 @@ const Dashboard = () => {
           </Stack>
         </CardContent>
       </Card>
+      <AppSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+      />
     </Container>
   );
 };

@@ -92,6 +92,16 @@ exports.createTransaction = async (req, res) => {
     } else {
       existingProduct.quantity -= numQty;
 
+      await createActivity({
+        user: req.user._id,
+        action: "STOCK_OUT",
+        module: "Transaction",
+        description: `Removed ${numQty} units from ${existingProduct.name}`,
+        metadata: {
+          productId: existingProduct._id,
+          quantity: numQty,
+        },
+      });
       // Notification: After Stock OUT
       await createNotification(
         req.user._id,

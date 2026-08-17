@@ -107,6 +107,7 @@ const TransactionForm = ({
   };
 
   return (
+   <>
     <AppDialog
       open={open}
       onClose={onClose}
@@ -278,6 +279,7 @@ const TransactionForm = ({
         </Stack>
       </DialogContent>
     </AppDialog>
+  </> 
   );
 };
 

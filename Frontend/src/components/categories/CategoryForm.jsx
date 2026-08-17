@@ -131,7 +131,6 @@ const CategoryForm = ({
           </Stack>
         </DialogContent>
       </AppDialog>
-
       <AppSnackbar
         open={snackbar.open}
         message={snackbar.message}

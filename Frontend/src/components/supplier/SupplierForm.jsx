@@ -63,6 +63,7 @@ const SupplierForm = ({
   };
 
   return (
+   <>
     <AppDialog
       open={open}
       onClose={onClose}
@@ -170,6 +171,7 @@ const SupplierForm = ({
         </Grid>
       </DialogContent>
     </AppDialog>
+  </> 
   );
 };
 
