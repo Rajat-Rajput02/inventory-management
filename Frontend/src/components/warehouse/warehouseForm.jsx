@@ -3,6 +3,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { Button, Grid, MenuItem, Stack, TextField } from "@mui/material";
 import AppDialog from "../common/AppDialog";
+import AppSnackbar from "../common/AppSnackbar";
 
 const initialForm = {
   name: "",
@@ -17,6 +18,8 @@ const WarehouseForm = ({ open, onClose, selectedWarehouse, onSubmit }) => {
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+const showSnackbar = (message, severity = "success") => setSnackbar({ open: true, message, severity });
 
   const isEdit = Boolean(selectedWarehouse);
 
@@ -72,11 +75,18 @@ const WarehouseForm = ({ open, onClose, selectedWarehouse, onSubmit }) => {
         ...formData,
         code: formData.code.toUpperCase(),
       });
+      showSnackbar(
+        `Warehouse ${isEdit ? "updated" : "added"} successfully!`,
+        "success"
+      );
       setFormData(initialForm);
       setErrors({});
       onClose();
     } catch (error) {
-      console.error(error);
+     showSnackbar(
+        error?.response?.data?.message || "Failed to save warehouse",
+        "error"
+      );
     } finally {
       setSaving(false);
     }
@@ -183,6 +193,12 @@ const WarehouseForm = ({ open, onClose, selectedWarehouse, onSubmit }) => {
           </TextField>
         </Grid>
       </Grid>
+      <AppSnackbar
+  open={snackbar.open}
+  message={snackbar.message}
+  severity={snackbar.severity}
+  onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+/>
     </AppDialog>
   );
 };

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { DialogContent, Button, TextField, Stack } from "@mui/material";
 import AppDialog from "../common/AppDialog";
+import AppSnackbar from "../components/common/AppSnackbar";
+
 
 const initialState = {
   name: "",
@@ -9,17 +11,12 @@ const initialState = {
   description: "",
 };
 
-const CategoryForm = ({
-  open,
-
-  onClose,
-
-  selectedCategory,
-
-  onSubmit,
+const CategoryForm = ({ open, onClose, selectedCategory, onSubmit,
 }) => {
   const [formData, setFormData] = useState(initialState);
   const [saving, setSaving] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+ const showSnackbar = (message, severity = "success") => setSnackbar({ open: true, message, severity });
 
   const isEdit = Boolean(selectedCategory);
   const settingCategory = async (selectedCategory)=> {
@@ -43,12 +40,14 @@ const CategoryForm = ({
       setSaving(true);
 
       await onSubmit(formData);
-
+      showSnackbar(
+        `Category ${isEdit ? "updated" : "added"} successfully!`,
+        "success"
+      );
       setFormData(initialState);
-
       onClose();
     } catch (error) {
-      console.error(error);
+      showSnackbar(error?.response?.data?.message || "Failed to save Category", "error");
     } finally {
       setSaving(false);
     }
@@ -102,6 +101,12 @@ const CategoryForm = ({
           />
         </Stack>
       </DialogContent>
+      <AppSnackbar
+  open={snackbar.open}
+  message={snackbar.message}
+  severity={snackbar.severity}
+  onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+/>
     </AppDialog>
   );
 };

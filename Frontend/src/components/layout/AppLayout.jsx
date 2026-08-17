@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useTheme } from "@mui/material/styles";
-
+import AppSnackbar from "../common/AppSnackbar";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import NotificationDrawer from "../dashboard/NotificationDrawer";
@@ -18,6 +18,14 @@ const AppLayout = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "error",
+  });
+
+  const showSnackbar = (message, severity = "error") =>
+    setSnackbar({ open: true, message, severity });
 
   const handleOpenSidebar = () => {
     setMobileSidebarOpen(true);
@@ -32,7 +40,9 @@ const AppLayout = () => {
       const data = await getNotifications();
       setNotifications(data || []);
     } catch (error) {
-      console.error("Error loading notifications:", error);
+      showSnackbar(
+        error?.response?.data?.message || "Error loading notifications",
+      );
     }
   }, []);
 
@@ -82,10 +92,24 @@ const AppLayout = () => {
         onClose={() => setNotificationOpen(false)}
         notifications={notifications}
         markAsRead={async (id) => {
-          await markAsRead(id);
-          await loadNotifications();
+          try {
+            await markAsRead(id);
+            await loadNotifications();
+          } catch (error) {
+            showSnackbar(
+              error?.response?.data?.message ||
+                "Failed to mark notification as read",
+              "error",
+            );
+          }
         }}
         loadNotifications={loadNotifications}
+      />
+      <AppSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
       />
     </Box>
   );

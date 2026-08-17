@@ -60,6 +60,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import TodayIcon from "@mui/icons-material/Today";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import AppSnackbar from "../components/common/AppSnackbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -74,6 +75,13 @@ const Dashboard = () => {
   const stockChartData = getStockData ? getStockData(products) : [];
   // 1. Dialog state
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const showSnackbar = (message, severity = "success") =>
+    setSnackbar({ open: true, message, severity });
 
   // 2. Fetch categories required by ProductForm
   const { categories } = useCategories();
@@ -99,7 +107,10 @@ const Dashboard = () => {
         Array.isArray(activityData) ? activityData : activityData?.data || [],
       );
     } catch (err) {
-      console.error("Error fetching dashboard data:", err);
+      showSnackbar(
+        error?.response?.data?.message || "Error fetching dashboard data:",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
@@ -111,7 +122,10 @@ const Dashboard = () => {
       await refreshProducts();
       await loadDashboardData();
     } catch (error) {
-      console.error("Failed to create product:", error);
+      showSnackbar(
+        error?.response?.data?.message || "Failed to Create product",
+        "error",
+      );
     }
   };
 

@@ -3,12 +3,22 @@ const path = require("path");
 require("dotenv").config({
   path: path.join(__dirname, ".env"),
 });
-const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
-
-const express = require("express");
 const cors = require("cors");
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),
+);
+
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const express = require("express");
 const connectDB = require("./config/db");
 
 const activityRoutes =

@@ -123,8 +123,6 @@ const handleAvatarUpload = async (e) => {
 
     showSnackbar("Avatar updated successfully");
   } catch (err) {
-    console.error("Avatar upload failed:", err);
-
     showSnackbar(
       err.response?.data?.message || "Failed to upload avatar",
       "error",

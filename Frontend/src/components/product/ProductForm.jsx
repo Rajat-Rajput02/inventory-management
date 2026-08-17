@@ -5,6 +5,7 @@ import useSuppliers from "../../hooks/useSuppliers";
 import useWarehouses from "../../hooks/useWarehouses";
 import { PRODUCT_STATUS } from "../../constants/status";
 import { PRODUCT_UNITS } from "../../constants/units";
+import AppSnackbar from "../common/AppSnackbar";
 import {
   Avatar,
   Autocomplete,
@@ -46,6 +47,8 @@ const ProductForm = ({
   const [saving, setSaving] = useState(false);
   const { suppliers } = useSuppliers();
   const { warehouses } = useWarehouses();
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+const showSnackbar = (message, severity = "success") => setSnackbar({ open: true, message, severity });
 
   const isEdit = Boolean(selectedProduct);
 
@@ -123,11 +126,18 @@ const ProductForm = ({
     try {
       setSaving(true);
       await onSubmit(formData);
+      showSnackbar(
+        `Product ${isEdit ? "updated" : "added"} successfully!`,
+        "success"
+      );
       setFormData(initialForm);
       setErrors({});
       onClose();
     } catch (error) {
-      console.error(error);
+     showSnackbar(
+        error?.response?.data?.message || "Failed to save product",
+        "error"
+      );
     } finally {
       setSaving(false);
     }
@@ -426,6 +436,12 @@ const ProductForm = ({
           </TextField>
         </Grid>
       </Grid>
+      <AppSnackbar
+  open={snackbar.open}
+  message={snackbar.message}
+  severity={snackbar.severity}
+  onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+/>
     </AppDialog>
   );
 };
