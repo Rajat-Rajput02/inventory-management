@@ -1,104 +1,127 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Profile from "./pages/Profile";
-import Products from "./pages/Products";
-import Categories from "./pages/Categories";
-import Suppliers from "./pages/Suppliers";
-import Warehouses from "./pages/Warehouses";
-import AppLayout from "./components/layout/AppLayout";
-import Reports from "./pages/Reports";
-import Transactions from "./pages/Transactions";
-import Activity from "./pages/Activity";
-import Settings from "./pages/Settings";
-import Users from "./pages/Users";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-import { ROUTES } from "../src/constants/routes";
+import { lazy, Suspense } from "react";
+
+import AppLayout from "./components/layout/AppLayout";
+
+import { ROUTES } from "./constants/routes";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import PublicRoute from "./components/routes/PublicRoute";
 
+import Loader from "./components/common/Loader";
+// Public pages
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+
+// Protected pages
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Products = lazy(() => import("./pages/Products"));
+const Categories = lazy(() => import("./pages/Categories"));
+const Suppliers = lazy(() => import("./pages/Suppliers"));
+const Warehouses = lazy(() => import("./pages/Warehouses"));
+const Reports = lazy(() => import("./pages/Reports"));
+const Transactions = lazy(() => import("./pages/Transactions"));
+const Activity = lazy(() => import("./pages/Activity"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Users = lazy(() => import("./pages/Users"));
+
 function App() {
   return (
-        <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
+    <BrowserRouter>
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          {/* =========================
+              PUBLIC ROUTES
+          ========================= */}
+
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            }
+          />
+
+          {/* =========================
+              PROTECTED ROUTES
+          ========================= */}
+
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+
+            <Route path={ROUTES.PRODUCTS} element={<Products />} />
+
+            <Route path={ROUTES.CATEGORIES} element={<Categories />} />
+
+            <Route path={ROUTES.SUPPLIERS} element={<Suppliers />} />
+
+            <Route path={ROUTES.WAREHOUSES} element={<Warehouses />} />
+
             <Route
-              path="/login"
-              element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                <PublicRoute>
-                  <Register />
-                </PublicRoute>
-              }
-            />
-            {/* <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }/>
-        {/* Protected Routes *
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } /> */}
-            <Route
+              path={ROUTES.TRANSACTIONS}
               element={
                 <ProtectedRoute>
-                  <AppLayout />
+                  <Transactions />
                 </ProtectedRoute>
               }
-            >
-              <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
-              <Route path={ROUTES.PRODUCTS} element={<Products />} />
-              <Route path={ROUTES.CATEGORIES} element={<Categories />} />
-              <Route path={ROUTES.SUPPLIERS} element={<Suppliers />} />
-              <Route path={ROUTES.WAREHOUSES} element={<Warehouses />} />
-              <Route
-                path={ROUTES.TRANSACTIONS}
-                element={
-                  <ProtectedRoute>
-                    <Transactions />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={ROUTES.ACTIVITY}
-                element={
-                  <ProtectedRoute>
-                    <Activity />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={ROUTES.SETTINGS}
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path={ROUTES.REPORTS} element={<Reports />} />
-              <Route path={ROUTES.PROFILE} element={<Profile />} />
-              <Route path="/users" element={<Users />} />
-            </Route>
-            {/* Unknown Route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
- 
+            />
+
+            <Route
+              path={ROUTES.ACTIVITY}
+              element={
+                <ProtectedRoute>
+                  <Activity />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path={ROUTES.SETTINGS}
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path={ROUTES.REPORTS} element={<Reports />} />
+
+            <Route path={ROUTES.PROFILE} element={<Profile />} />
+
+            <Route path="/users" element={<Users />} />
+          </Route>
+
+          {/* =========================
+              UNKNOWN ROUTE
+          ========================= */}
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   );
 }
+
 export default App;
