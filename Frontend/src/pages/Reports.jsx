@@ -87,6 +87,8 @@ const Reports = () => {
   const [selectedWarehouse, setSelectedWarehouse] = useState("all");
   const [selectedSupplier, setSelectedSupplier] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [viewProduct, setViewProduct] = useState(null);
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
