@@ -28,19 +28,24 @@ import CategoryPieChart from "../components/charts/CategoryPieChart";
 import StockBarChart from "../components/charts/StockBarChart";
 import ErrorFallback from "../components/common/ErrorFallback";
 
+import ProductDetailsDialog from "../components/product/ProductDetailsDialog";
+import ProductForm from "../components/product/ProductForm";
+import TransactionForm from "../components/transaction/TransactionForm";
+import DeleteDialog from "../components/product/DeleteDialog";
+import ProductDetailsDrawer from "../components/product/ProductDetailsDrawer";
+
 import useProducts from "../hooks/useProducts";
 import useCategories from "../hooks/useCategories";
 import useWarehouses from "../hooks/useWarehouses";
 import useSuppliers from "../hooks/useSuppliers";
 import useDashboard from "../hooks/useDashboard";
+import useTransactions from "../hooks/useTransaction";
 
 import exportExcel from "../utils/export/exportExcel";
 import exportPdf from "../utils/export/exportPdf";
 import { formatCurrency } from "../utils/currency";
 import { getCategoryData, getStockData } from "../utils/chartData";
 import PageContainer from "../components/layout/PageContainer";
-
-const noop = () => {};
 
 const toDateValue = (value) => {
   if (!value) return "";
@@ -61,16 +66,24 @@ const getSupplierId = (product) =>
   (typeof product?.supplier === "string" ? product.supplier : "");
 
 const Reports = () => {
-  const { products, loading, error, refreshProducts } = useProducts();
+  const {
+    products,
+    loading,
+    error,
+    editProduct,
+    removeProduct,
+    refreshProducts,
+  } = useProducts();
+  const { createTransaction, reload: reloadTransactions } = useTransactions();
   const { categories } = useCategories();
   const { warehouses } = useWarehouses();
   const { suppliers = [] } = useSuppliers();
+
   const {
     selectedProduct,
     openForm,
     deleteDialog,
     deleteProduct,
-    openAddDialog,
     closeForm,
     closeDeleteDialog,
     setSelectedProduct,
@@ -80,6 +93,7 @@ const Reports = () => {
   } = useDashboard(products);
 
   const [openDetails, setOpenDetails] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const [transactionType, setTransactionType] = useState("IN");
   const [transactionOpen, setTransactionOpen] = useState(false);
@@ -249,6 +263,7 @@ const Reports = () => {
     exportPdf(filteredProducts, summary);
     showSnackbar("PDF Report exported successfully!");
   };
+
   // ==========================
   // TABLE EVENTS
   // ==========================
@@ -266,8 +281,50 @@ const Reports = () => {
     setDeleteProduct(product);
     setDeleteDialog(true);
   };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
+    setSelectedProduct(null);
+  };
+
   // ==========================
-  // TRANSACTION IN / OUT FIX
+  // SAVE / EDIT HANDLER
+  // ==========================
+  const handleSaveProduct = async (formData) => {
+    try {
+      const id = selectedProduct?._id || selectedProduct?.id;
+      if (id) {
+        await editProduct(id, formData);
+        showSnackbar("Product Updated Successfully");
+        if (refreshProducts) await refreshProducts();
+        closeForm();
+      }
+    } catch (err) {
+      const serverMessage =
+        err?.response?.data?.message || err?.message || "Failed to update product";
+      showSnackbar(serverMessage, "error");
+    }
+  };
+
+  // ==========================
+  // DELETE HANDLER
+  // ==========================
+  const handleDeleteProduct = async () => {
+    try {
+      const id = deleteProduct?._id || deleteProduct?.id;
+      if (id) {
+        await removeProduct(id);
+        showSnackbar("Product Deleted Successfully");
+        if (refreshProducts) await refreshProducts();
+        closeDeleteDialog();
+      }
+    } catch {
+      showSnackbar("Unable to Delete Product", "error");
+    }
+  };
+
+  // ==========================
+  // TRANSACTION IN / OUT HANDLERS
   // ==========================
   const handleStockIn = (product) => {
     setSelectedProduct(product);
@@ -281,6 +338,45 @@ const Reports = () => {
     setTransactionOpen(true);
   };
 
+  const handleTransactionSubmit = async (data) => {
+    try {
+      const productId =
+        data.product || selectedProduct?._id || selectedProduct?.id;
+
+      const type = data.type || transactionType;
+
+      const payload = {
+        product: productId,
+        productId: productId,
+        type,
+        quantity: Number(data.quantity),
+        unitPrice: Number(
+          data.unitPrice || data.price || selectedProduct?.costPrice || 0,
+        ),
+        reason: data.reason,
+        notes: data.notes || "",
+      };
+
+      await createTransaction(payload);
+
+      showSnackbar(`Stock ${type === "IN" ? "Added" : "Removed"} Successfully`);
+
+      setTransactionOpen(false);
+      setSelectedProduct(null);
+
+      if (refreshProducts) {
+        await refreshProducts();
+      }
+
+      if (reloadTransactions) {
+        await reloadTransactions();
+      }
+    } catch (err) {
+      const msg = err?.response?.data?.message || "Transaction failed";
+      showSnackbar(msg, "error");
+    }
+  };
+
   if (loading)
     return (
       <Container maxWidth={false} sx={{ py: 4 }}>
@@ -290,6 +386,7 @@ const Reports = () => {
   if (error) {
     return <ErrorFallback message={error} onRetry={refreshProducts} />;
   }
+
   return (
     <PageContainer
       maxWidth={false}
@@ -302,7 +399,7 @@ const Reports = () => {
       />
 
       <Stack spacing={2.25}>
-        {/* STEP 7 Toolbar Filters */}
+        {/* Toolbar Filters */}
         <Paper sx={{ p: 2.5, borderRadius: 3 }} elevation={2}>
           <Typography variant="subtitle2" fontWeight={700} mb={2}>
             Report Filters
@@ -471,6 +568,50 @@ const Reports = () => {
         </Paper>
       </Stack>
 
+      {/* Product Details Dialog */}
+      <ProductDetailsDialog
+        open={openDetails}
+        onClose={() => setOpenDetails(false)}
+        product={viewProduct}
+      />
+
+      {/* Product Edit Form */}
+      <ProductForm
+        open={openForm}
+        onClose={handleCloseForm}
+        selectedProduct={selectedProduct}
+        categories={categories}
+        onSubmit={handleSaveProduct}
+      />
+
+      {/* Delete Dialog */}
+      <DeleteDialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        product={deleteProduct}
+        onDelete={handleDeleteProduct}
+      />
+
+      {/* Transaction Form Modal (Stock IN / OUT) */}
+      <TransactionForm
+        open={transactionOpen}
+        onClose={() => {
+          setTransactionOpen(false);
+          setSelectedProduct(null);
+        }}
+        product={selectedProduct}
+        type={transactionType}
+        onSubmit={handleTransactionSubmit}
+      />
+
+      {/* Product Details Drawer */}
+      <ProductDetailsDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        product={viewProduct}
+      />
+
+      {/* Snackbar Alert */}
       <AppSnackbar
         open={snackbar.open}
         message={snackbar.message}
