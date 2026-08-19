@@ -229,6 +229,37 @@ const Reports = () => {
     exportPdf(filteredProducts, summary);
     showSnackbar("PDF Report exported successfully!");
   };
+    // ==========================
+  // TABLE EVENTS
+  // ==========================
+  const handleViewProduct = (product) => {
+    setViewProduct(product);
+    setOpenDetails(true);
+  };
+
+  const handleEditClick = (product) => {
+    setSelectedProduct(product);
+    setOpenForm(true);
+  };
+
+  const handleDeleteClick = (product) => {
+    setDeleteProduct(product);
+    setDeleteDialog(true);
+  };
+  // ==========================
+  // TRANSACTION IN / OUT FIX
+  // ==========================
+  const handleStockIn = (product) => {
+    setSelectedProduct(product);
+    setTransactionType("IN");
+    setTransactionOpen(true);
+  };
+
+  const handleStockOut = (product) => {
+    setSelectedProduct(product);
+    setTransactionType("OUT");
+    setTransactionOpen(true);
+  };
 
   if (loading)
     return (
@@ -385,11 +416,11 @@ const Reports = () => {
         {/* Filtered Data Table */}
         <ProductTable
           products={filteredProducts}
-          onView={noop}
-          onEdit={noop}
-          onDelete={noop}
-          onStockIn={noop}
-          onStockOut={noop}
+          onView={handleViewProduct}
+          onEdit={handleEditProduct}
+          onDelete={handleDeletProduct}
+          onStockIn={handleStockIn}
+          onStockOut={handleStockOut}
         />
 
         {/* Export Buttons */}
