@@ -24,6 +24,7 @@ const ConfirmDialog = ({
       onClose={loading ? undefined : onClose}
       maxWidth="xs"
       fullWidth
+      disableRestoreFocus
     >
       <DialogTitle>{title}</DialogTitle>
 

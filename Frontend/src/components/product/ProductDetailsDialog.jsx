@@ -34,7 +34,7 @@ const ProductDetailsDialog = ({ open, onClose, product }) => {
   const profit = sellingPrice - costPrice;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth disableRestoreFocus>
       <DialogTitle>Product Details</DialogTitle>
 
       <DialogContent>

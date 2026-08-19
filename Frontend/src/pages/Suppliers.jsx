@@ -160,6 +160,7 @@ const Suppliers = () => {
         onClose={() => setDeleteDialog(false)}
         maxWidth="xs"
         fullWidth
+        disableRestoreFocus
       >
         <DialogTitle
           sx={{ display: "flex", alignItems: "center", gap: 1 }}

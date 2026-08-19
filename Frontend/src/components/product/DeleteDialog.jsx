@@ -10,7 +10,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const DeleteDialog = ({ open, onClose, onDelete, product }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} disableRestoreFocus>
       <DialogTitle
         sx={{
           display: "flex",

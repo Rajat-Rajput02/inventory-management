@@ -194,7 +194,7 @@ const Warehouses = () => {
         onSubmit={handleSave}
       />
 
-      <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}>
+      <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)} disableRestoreFocus>
         <DialogTitle
           sx={{
             display: "flex",

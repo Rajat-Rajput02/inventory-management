@@ -7,7 +7,7 @@ import {
 
 const AppDialog = ({ open, title, children, actions, onClose }) => {
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" disableRestoreFocus>
       <DialogTitle>{title}</DialogTitle>
 
       <DialogContent dividers>{children}</DialogContent>
