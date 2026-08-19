@@ -36,11 +36,12 @@ connectDB();
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  "http://localhost:5000/api",
 ].filter(Boolean);
 
 app.use(
   cors({
-    origin: "*",
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
