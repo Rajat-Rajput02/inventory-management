@@ -32,6 +32,7 @@ import useProducts from "../hooks/useProducts";
 import useCategories from "../hooks/useCategories";
 import useWarehouses from "../hooks/useWarehouses";
 import useSuppliers from "../hooks/useSuppliers";
+import useDashboard from "../hooks/useDashboard";
 
 import exportExcel from "../utils/export/exportExcel";
 import exportPdf from "../utils/export/exportPdf";
