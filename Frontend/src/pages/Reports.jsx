@@ -64,43 +64,43 @@ const Reports = () => {
   const { categories } = useCategories();
   const { warehouses } = useWarehouses();
   const { suppliers = [] } = useSuppliers();
-   const {  
-      selectedCategory,
-      setSelectedCategory,
-  
-      selectedProduct,
-  
-      openForm,
-  
-      deleteDialog,
-  
-      deleteProduct,
-  
-      snackbar,
-  
-      filteredProducts,
-  
-      openAddDialog,
-  
-      closeForm,
-  
-      closeDeleteDialog,
-  
-      showSnackbar,
-  
-      closeSnackbar,
-  
-      setSelectedProduct,
-  
-      setDeleteProduct,
-  
-      setOpenForm,
-  
-      setDeleteDialog,
-    } = useDashboard(products);
+  const {
+    selectedCategory,
+    setSelectedCategory,
 
-    const [transactionType, setTransactionType] = useState("IN");
-    const [transactionOpen, setTransactionOpen] = useState(false);
+    selectedProduct,
+
+    openForm,
+
+    deleteDialog,
+
+    deleteProduct,
+
+    snackbar,
+
+    filteredProducts,
+
+    openAddDialog,
+
+    closeForm,
+
+    closeDeleteDialog,
+
+    showSnackbar,
+
+    closeSnackbar,
+
+    setSelectedProduct,
+
+    setDeleteProduct,
+
+    setOpenForm,
+
+    setDeleteDialog,
+  } = useDashboard(products);
+
+  const [transactionType, setTransactionType] = useState("IN");
+  const [transactionOpen, setTransactionOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -265,7 +265,7 @@ const Reports = () => {
     exportPdf(filteredProducts, summary);
     showSnackbar("PDF Report exported successfully!");
   };
-    // ==========================
+  // ==========================
   // TABLE EVENTS
   // ==========================
   const handleViewProduct = (product) => {
@@ -453,7 +453,7 @@ const Reports = () => {
         <ProductTable
           products={filteredProducts}
           onView={handleViewProduct}
-          onEdit={handleEditProduct}
+          onEdit={handleEditClick}
           onDelete={handleDeletProduct}
           onStockIn={handleStockIn}
           onStockOut={handleStockOut}
@@ -493,7 +493,7 @@ const Reports = () => {
         severity={snackbar.severity}
         onClose={closeSnackbar}
       />
-  </PageContainer>
+    </PageContainer>
   );
 };
 
