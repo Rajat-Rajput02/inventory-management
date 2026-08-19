@@ -79,6 +79,8 @@ const Reports = () => {
     setDeleteDialog,
   } = useDashboard(products);
 
+  const [openDetails, setOpenDetails] = useState(false);
+
   const [transactionType, setTransactionType] = useState("IN");
   const [transactionOpen, setTransactionOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
