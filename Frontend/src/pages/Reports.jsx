@@ -65,37 +65,16 @@ const Reports = () => {
   const { warehouses } = useWarehouses();
   const { suppliers = [] } = useSuppliers();
   const {
-    selectedCategory,
-    setSelectedCategory,
-
     selectedProduct,
-
     openForm,
-
     deleteDialog,
-
     deleteProduct,
-
-    snackbar,
-
-    filteredProducts,
-
     openAddDialog,
-
     closeForm,
-
     closeDeleteDialog,
-
-    showSnackbar,
-
-    closeSnackbar,
-
     setSelectedProduct,
-
     setDeleteProduct,
-
     setOpenForm,
-
     setDeleteDialog,
   } = useDashboard(products);
 
