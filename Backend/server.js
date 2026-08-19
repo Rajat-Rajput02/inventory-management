@@ -41,8 +41,6 @@ const transactionRoutes = require("./routes/transactionRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 
-const app = express();
-
 // ==============================
 // DATABASE
 // ==============================
