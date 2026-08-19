@@ -174,11 +174,11 @@ const Warehouses = () => {
 
       {warehouses.length === 0 ? (
         <EmptyState
-    title="No Warehouses"
-    subtitle="Start by adding your first warehouse."
-    buttonText="Add Warehouse"
-    onClick={handleOpenAdd} 
-  />
+          title="No Warehouses"
+          subtitle="Start by adding your first warehouse."
+          buttonText="Add Warehouse"
+          onClick={handleOpenAdd}
+        />
       ) : (
         <WarehouseTable
           warehouses={warehouses}
@@ -194,7 +194,11 @@ const Warehouses = () => {
         onSubmit={handleSave}
       />
 
-      <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)} disableRestoreFocus>
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+        disableRestoreFocus
+      >
         <DialogTitle
           sx={{
             display: "flex",
