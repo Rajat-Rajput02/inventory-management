@@ -1,13 +1,32 @@
 const path = require("path");
-const express = require("express");
-const cors = require("cors");
 
 require("dotenv").config({
   path: path.join(__dirname, ".env"),
 });
 
-const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorMiddleware");
+const cors = require("cors");
+const express = require("express");
+const connectDB = require("./config/db");
+
+const app = express();
+// CORS 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
+app.use(express.json());
+
+connectDB();
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
@@ -28,38 +47,6 @@ const app = express();
 // DATABASE
 // ==============================
 connectDB();
-
-// ==============================
-// CORS
-// ==============================
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-].filter(Boolean);
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests without an origin
-      // such as Postman/server-to-server requests.
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  }),
-);
-
-// ==============================
-// BODY PARSING
-// ==============================
-app.use(express.json());
-
 // ==============================
 // API ROUTES
 // ==============================
