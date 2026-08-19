@@ -21,7 +21,7 @@ const Register = lazy(() => import("./pages/Register"));
 // Protected pages
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Products = () => import("./pages/Products");
+const Products = lazy(() => import("./pages/Products"));
 const Categories = lazy(() => import("./pages/Categories"));
 const Suppliers = lazy(() => import("./pages/Suppliers"));
 const Warehouses = lazy(() => import("./pages/Warehouses"));
