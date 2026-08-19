@@ -434,7 +434,7 @@ const Reports = () => {
           products={filteredProducts}
           onView={handleViewProduct}
           onEdit={handleEditClick}
-          onDelete={handleDeletProduct}
+          onDelete={handleDeletClick}
           onStockIn={handleStockIn}
           onStockOut={handleStockOut}
         />
