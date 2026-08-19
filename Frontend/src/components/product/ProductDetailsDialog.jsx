@@ -58,7 +58,7 @@ const ProductDetailsDialog = ({ open, onClose, product }) => {
 
           <Typography>Supplier : {supplierLabel}</Typography>
 
-          <Typography>Description</Typography>
+          <Typography>Description: {product.description}</Typography>
 
           <Typography color="text.secondary">{product.description}</Typography>
 
