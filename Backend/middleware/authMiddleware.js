@@ -10,36 +10,34 @@ const protect = async (req, res, next) => {
       req.headers.authorization.startsWith("Bearer ")
     ) {
       token = req.headers.authorization.split(" ")[1];
+
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET
+      );
+
+      const user = await User.findById(decoded.id);
+
+      if (!user) {
+        return res.status(401).json({
+          message: "User no longer exists",
+        });
+      }
+
+      if (!user.isActive) {
+        return res.status(403).json({
+          message: "Your account has been deactivated",
+        });
+      }
+
+      req.user = user;
+
+      return next();
     }
 
-    if (!token) {
-      return res.status(401).json({
-        message: "Not Authorized",
-      });
-    }
-
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
-
-    const user = await User.findById(decoded.id);
-
-    if (!user) {
-      return res.status(401).json({
-        message: "User no longer exists",
-      });
-    }
-
-    if (user.status === "inactive") {
-      return res.status(403).json({
-        message: "User account is inactive",
-      });
-    }
-
-    req.user = user;
-
-    next();
+    return res.status(401).json({
+      message: "Not Authorized",
+    });
   } catch (error) {
     return res.status(401).json({
       message: "Invalid or expired token",
@@ -47,4 +45,4 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+module.exports = { protect };0
